@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>咕咕嘎嘎</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background-color: #f0f0f0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.5s ease;
+        }
+        
+        .container {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 15px;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            max-width: 90%;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .btn {
+            background-color: white;
+            color: black;
+            border: 2px solid #333;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            outline: none;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:hover {
+            background-color: #333;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+        
+        .video-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        video {
+            max-width: 100%;
+            max-height: 100%;
+            outline: none;
+        }
+        
+        .loading {
+            display: none;
+            color: white;
+            font-size: 1.5rem;
+            margin-top: 20px;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            color: white;
+            font-size: 2rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+            outline: none;
+            z-index: 101;
+        }
+        
+        .instructions {
+            margin-top: 2rem;
+            color: #666;
+            font-size: 0.9rem;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>咕咕嘎嘎  咕咕嘎嘎  咕咕嘎嘎！</h1>
+        <button class="btn" id="playBtn">咕咕嘎嘎</button>
+        <p class="instructions">
+    </div>
+    
+    <div class="video-container" id="videoContainer">
+        <button class="close-btn" id="closeBtn">×</button>
+        <video id="videoPlayer" controls>
+            您的浏览器不支持HTML5视频播放
+        </video>
+        <div class="loading" id="loadingText">正在加载视频，请稍候...</div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const playBtn = document.getElementById('playBtn');
+            const videoContainer = document.getElementById('videoContainer');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const closeBtn = document.getElementById('closeBtn');
+            const loadingText = document.getElementById('loadingText');
+            const container = document.querySelector('.container');
+            
+            // 点击播放按钮
+            playBtn.addEventListener('click', function() {
+                // 隐藏主容器
+                container.style.opacity = '0';
+                container.style.transform = 'scale(0.95)';
+                
+                // 显示视频容器
+                videoContainer.style.display = 'flex';
+                
+                // 显示加载提示
+                loadingText.style.display = 'block';
+                
+                // 设置视频源
+                videoPlayer.src = 'video/test.mp4';
+                
+                // 尝试自动播放
+                const playPromise = videoPlayer.play();
+                
+                if (playPromise !== undefined) {
+                    playPromise.then(() => {
+                        // 自动播放成功，隐藏加载提示
+                        loadingText.style.display = 'none';
+                    }).catch(error => {
+                        // 自动播放失败，显示控制条让用户手动播放
+                        loadingText.style.display = 'none';
+                        videoPlayer.controls = true;
+                    });
+                }
+            });
+            
+            // 点击关闭按钮
+            closeBtn.addEventListener('click', function() {
+                videoContainer.style.display = 'none';
+                videoPlayer.pause();
+                container.style.opacity = '1';
+                container.style.transform = 'scale(1)';
+            });
+            
+            // 视频加载完成事件
+            videoPlayer.addEventListener('loadeddata', function() {
+                loadingText.style.display = 'none';
+            });
+            
+            // 视频加载错误处理
+            videoPlayer.addEventListener('error', function() {
+                loadingText.textContent = '视频加载失败，请刷新页面重试';
+            });
+        });
+    </script>
+</body>
+</html>
